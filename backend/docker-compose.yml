@@ -1,0 +1,33 @@
+services:
+  api:
+    build: .
+    container_name: ai-cloud-cost-detective-api
+    env_file:
+      - .env
+    ports:
+      - "${API_PORT:-8000}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    container_name: ai-cloud-cost-detective-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-ai_cloud_cost_detective}
+      POSTGRES_USER: ${POSTGRES_USER:-ai_cost_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ai_cost_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

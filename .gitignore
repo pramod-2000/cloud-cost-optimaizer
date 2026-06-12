@@ -1,0 +1,26 @@
+# Environment files
+.env
+.env.*
+backend/.env
+frontend/.env
+
+# Node modules
+node_modules/
+
+# Python virtual environments
+venv/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Build artifacts
+dist/
+build/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store

@@ -1,4 +1,19 @@
 services:
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: ai-cloud-cost-detective-frontend
+    ports:
+      - "${FRONTEND_PORT:-4173}:4173"
+    depends_on:
+      - api
+    restart: unless-stopped
+    networks:
+      - app-network
+    environment:
+      - VITE_API_URL=http://localhost:8000
+
   api:
     build: .
     container_name: ai-cloud-cost-detective-api
@@ -10,6 +25,8 @@ services:
       db:
         condition: service_healthy
     restart: unless-stopped
+    networks:
+      - app-network
 
   db:
     image: postgres:16-alpine
@@ -28,6 +45,12 @@ services:
       timeout: 5s
       retries: 5
     restart: unless-stopped
+    networks:
+      - app-network
 
 volumes:
   postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
